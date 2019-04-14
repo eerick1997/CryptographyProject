@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment_filters_list">
+    tools:context=".ImageEditor.Principal.fragment_filters_list">
 
     <view class="androidx.appcompat.app.AlertController$RecycleListView"
         android:id="@+id/recycler_view"
