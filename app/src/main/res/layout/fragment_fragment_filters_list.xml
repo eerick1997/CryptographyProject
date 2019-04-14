@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ImageEditor.Principal.fragment_filters_list">
+    tools:context=".ImageEditor.Principal.FiltersListFragment">
 
-    <view class="androidx.appcompat.app.AlertController$RecycleListView"
+    <view class="androidx.recyclerview.widget.RecyclerView"
         android:id="@+id/recycler_view"
         android:layout_gravity="center_vertical"
         android:padding="4dp"
