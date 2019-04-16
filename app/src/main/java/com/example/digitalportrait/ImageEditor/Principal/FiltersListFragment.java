@@ -71,7 +71,7 @@ public class FiltersListFragment extends Fragment implements FilterListFragmentL
         return itemView;
     }
 
-    private void displayThumbnail(final Bitmap bitmap){
+    public void displayThumbnail(final Bitmap bitmap){
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -119,4 +119,6 @@ public class FiltersListFragment extends Fragment implements FilterListFragmentL
         if(listener != null)
             listener.onFilteredSelected(filter);
     }
+
+
 }
