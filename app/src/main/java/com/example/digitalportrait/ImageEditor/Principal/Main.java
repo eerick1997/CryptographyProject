@@ -34,14 +34,11 @@ import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
-
-import java.io.IOError;
-import java.io.IOException;
 import java.util.List;
 
 public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener  {
 
-    public static final String pictureName = "meme.png";
+    public static final String pictureName = "meme2.png";
     public static final int PERMISSION_PICK_IMAGE = 1000;
 
     ImageView imagePreview;
@@ -72,7 +69,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         imagePreview = findViewById(R.id.image_preview);
         tabLayout = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.viewpager);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinator);
+        coordinatorLayout = findViewById(R.id.coordinator);
 
         loadImage();
         setupViewPager(viewPager);
@@ -95,7 +92,6 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
         finalBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
         imagePreview.setImageBitmap(originalBitmap);
-
     }
 
     @Override
@@ -191,7 +187,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
-                });
+                }).check();
     }
 
     private void saveImageToGallery(){
@@ -231,7 +227,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
                         token.continuePermissionRequest();
                     }
-                });
+                }).check();
     }
 
     private void openImage(String path){
