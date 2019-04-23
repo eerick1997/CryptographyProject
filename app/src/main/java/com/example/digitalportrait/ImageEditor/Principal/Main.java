@@ -46,6 +46,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
 
     public static final String pictureName = "meme2.png";
     public static final int PERMISSION_PICK_IMAGE = 1000;
+    public static final int PERMISSION_INSERT_IMAGE = 1001;
 
     PhotoEditorView photoEditorView;
     PhotoEditor photoEditor;
@@ -54,7 +55,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
-    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText;
+    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText, btnAddImage;
 
     int brightnessFinal = 0;
     float saturationFinal = 1.0f;
@@ -86,6 +87,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         btnBrush = findViewById(R.id.btn_brush);
         btnEmoji = findViewById(R.id.btn_emoji);
         btnText = findViewById(R.id.btn_text);
+        btnAddImage = findViewById(R.id.btn_add_image);
 
         btnFiltersList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +135,35 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                 addTextFragment.show(getSupportFragmentManager(), addTextFragment.getTag());
             }
         });
+
+        btnAddImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addImageToPicture();
+            }
+        });
         loadImage();
+    }
+
+    private void addImageToPicture(){
+        Dexter.withActivity(this)
+                .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        if (report.areAllPermissionsGranted()){
+                            Intent intent = new Intent(Intent.ACTION_PICK);
+                            intent.setType("image/*");
+                            startActivityForResult(intent, PERMISSION_INSERT_IMAGE);
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        Toast.makeText(Main.this, "Permission denied", Toast.LENGTH_LONG).show();
+                    }
+                }).check();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -309,19 +339,23 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK && requestCode == PERMISSION_PICK_IMAGE){
-            Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 800, 800);
-            originalBitmap.recycle();
-            finalBitmap.recycle();
-            filteredBitmap.recycle();
-            originalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-            finalBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
-            photoEditorView.getSource().setImageBitmap(originalBitmap);
-            bitmap.recycle();
+        if(resultCode == RESULT_OK){
+            if(requestCode == PERMISSION_PICK_IMAGE) {
+                Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 800, 800);
+                originalBitmap.recycle();
+                finalBitmap.recycle();
+                filteredBitmap.recycle();
+                originalBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                finalBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
+                photoEditorView.getSource().setImageBitmap(originalBitmap);
+                bitmap.recycle();
 
-            filtersListFragment.displayThumbnail(originalBitmap);
-
+                filtersListFragment.displayThumbnail(originalBitmap);
+            } else if (requestCode == PERMISSION_INSERT_IMAGE){
+                Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 200, 200);
+                photoEditor.addImage(bitmap);
+            }
         }
     }
 
