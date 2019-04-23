@@ -21,6 +21,7 @@ import com.example.digitalportrait.ImageEditor.Interface.FilterListFragmentListe
 import com.example.digitalportrait.ImageEditor.Utils.BitmapUtils;
 import com.example.digitalportrait.ImageEditor.Utils.SpacesItemDecoration;
 import com.example.digitalportrait.R;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.zomato.photofilters.FilterPack;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.utils.ThumbnailItem;
@@ -33,12 +34,20 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FiltersListFragment extends Fragment implements FilterListFragmentListener{
+public class FiltersListFragment extends BottomSheetDialogFragment implements FilterListFragmentListener{
 
     RecyclerView recyclerView;
     ThumbnailAdapter adapter;
     List<ThumbnailItem> thumbnailItems;
     FilterListFragmentListener listener;
+
+    static FiltersListFragment instance;
+
+    public static FiltersListFragment getInstance(){
+        if(instance == null)
+            instance = new FiltersListFragment();
+        return instance;
+    }
 
     public void setListener(FilterListFragmentListener listener) {
         this.listener = listener;

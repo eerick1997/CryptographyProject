@@ -1,0 +1,67 @@
+package com.example.digitalportrait.ImageEditor.Adapter;
+
+import android.content.Context;
+import android.text.Layout;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.example.digitalportrait.R;
+
+import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
+public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHolder> {
+
+    Context context;
+    List<Integer> colorList;
+    ColorAdapterListener listener;
+
+    public ColorAdapter(Context context, List<Integer> colorList, ColorAdapterListener listener) {
+        this.context = context;
+        this.colorList = colorList;
+        this.listener = listener;
+    }
+
+    @NonNull
+    @Override
+    public ColorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(context).inflate(R.layout.color_item, parent, false);
+        return new ColorViewHolder(itemView);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ColorViewHolder holder, int position) {
+        holder.colorSection.setCardBackgroundColor(colorList.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return colorList.size();
+    }
+
+    public class ColorViewHolder extends RecyclerView.ViewHolder{
+
+        public CardView colorSection;
+
+
+        public ColorViewHolder(@NonNull View itemView) {
+            super(itemView);
+            colorSection = itemView.findViewById(R.id.color_section);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onColorSelected(colorList.get(getAdapterPosition()));
+                }
+            });
+        }
+    }
+
+    public interface ColorAdapterListener{
+        void onColorSelected(int color);
+
+    }
+}

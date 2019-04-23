@@ -14,15 +14,24 @@ import android.widget.SeekBar;
 import com.example.digitalportrait.ImageEditor.Interface.EditImageFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.FilterListFragmentListener;
 import com.example.digitalportrait.R;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditImageFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class EditImageFragment extends BottomSheetDialogFragment implements SeekBar.OnSeekBarChangeListener {
 
     private EditImageFragmentListener listener;
     SeekBar seekbarBrightness, seekbarConstrant, seekbarSaturation;
+
+    static EditImageFragment instance;
+
+    public static EditImageFragment getInstance(){
+        if(instance == null)
+            instance = new EditImageFragment();
+        return instance;
+    }
 
     public void setListener(EditImageFragmentListener listener) {
         this.listener = listener;
