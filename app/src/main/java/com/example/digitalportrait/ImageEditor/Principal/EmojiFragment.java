@@ -1,4 +1,4 @@
-package com.example.digitalportrait;
+package com.example.digitalportrait.ImageEditor.Principal;
 
 
 import android.os.Bundle;
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.example.digitalportrait.ImageEditor.Adapter.EmojiAdapter;
 import com.example.digitalportrait.ImageEditor.Interface.EmojiFragmentListener;
+import com.example.digitalportrait.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 

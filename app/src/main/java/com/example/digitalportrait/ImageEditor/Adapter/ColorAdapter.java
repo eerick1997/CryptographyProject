@@ -1,6 +1,7 @@
 package com.example.digitalportrait.ImageEditor.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.example.digitalportrait.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -20,9 +22,9 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
     List<Integer> colorList;
     ColorAdapterListener listener;
 
-    public ColorAdapter(Context context, List<Integer> colorList, ColorAdapterListener listener) {
+    public ColorAdapter(Context context, ColorAdapterListener listener) {
         this.context = context;
-        this.colorList = colorList;
+        this.colorList = genColorList();
         this.listener = listener;
     }
 
@@ -58,6 +60,21 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
                 }
             });
         }
+    }
+
+    private List<Integer> genColorList(){
+        List<Integer> colorList = new ArrayList<>();
+        colorList.add(Color.parseColor("#5359af"));
+        colorList.add(Color.parseColor("#ffccd5"));
+        colorList.add(Color.parseColor("#896d66"));
+        colorList.add(Color.parseColor("#b819f0"));
+        colorList.add(Color.parseColor("#a10000"));
+        colorList.add(Color.parseColor("#a15000"));
+        colorList.add(Color.parseColor("#1f3f3c"));
+        colorList.add(Color.parseColor("#416600"));
+        colorList.add(Color.parseColor("#121c25"));
+        colorList.add(Color.parseColor("#e6f6ff"));
+        return  colorList;
     }
 
     public interface ColorAdapterListener{

@@ -63,7 +63,7 @@ public class BrushFragment extends BottomSheetDialogFragment implements ColorAda
         recyclerColor = itemView.findViewById(R.id.recycler_color);
         recyclerColor.setHasFixedSize(true);
         recyclerColor.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        colorAdapter = new ColorAdapter(getContext(), genColorList(), this);
+        colorAdapter = new ColorAdapter(getContext(), this);
         recyclerColor.setAdapter(colorAdapter);
         //Event
         seekBarOpacity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -105,21 +105,6 @@ public class BrushFragment extends BottomSheetDialogFragment implements ColorAda
             }
         });
         return itemView;
-    }
-
-    private List<Integer> genColorList(){
-        List<Integer> colorList = new ArrayList<>();
-        colorList.add(Color.parseColor("#5359af"));
-        colorList.add(Color.parseColor("#ffccd5"));
-        colorList.add(Color.parseColor("#896d66"));
-        colorList.add(Color.parseColor("#b819f0"));
-        colorList.add(Color.parseColor("#a10000"));
-        colorList.add(Color.parseColor("#a15000"));
-        colorList.add(Color.parseColor("#1f3f3c"));
-        colorList.add(Color.parseColor("#416600"));
-        colorList.add(Color.parseColor("#121c25"));
-        colorList.add(Color.parseColor("#e6f6ff"));
-        return  colorList;
     }
 
     @Override

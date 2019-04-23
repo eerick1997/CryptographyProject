@@ -22,8 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.digitalportrait.EmojiFragment;
 import com.example.digitalportrait.ImageEditor.Adapter.ViewPagerAdapter;
+import com.example.digitalportrait.ImageEditor.Interface.AddTextFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.BrushFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.EditImageFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.EmojiFragmentListener;
@@ -42,7 +42,7 @@ import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 import java.util.List;
 
-public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener, BrushFragmentListener, EmojiFragmentListener {
+public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener, BrushFragmentListener, EmojiFragmentListener, AddTextFragmentListener {
 
     public static final String pictureName = "meme2.png";
     public static final int PERMISSION_PICK_IMAGE = 1000;
@@ -54,7 +54,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
-    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji;
+    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText;
 
     int brightnessFinal = 0;
     float saturationFinal = 1.0f;
@@ -85,6 +85,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         btnEdit = findViewById(R.id.btn_edit);
         btnBrush = findViewById(R.id.btn_brush);
         btnEmoji = findViewById(R.id.btn_emoji);
+        btnText = findViewById(R.id.btn_text);
 
         btnFiltersList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,6 +122,15 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                 EmojiFragment emojiFragment = EmojiFragment.getInstance();
                 emojiFragment.setListener(Main.this);
                 emojiFragment.show(getSupportFragmentManager(), emojiFragment.getTag());
+            }
+        });
+
+        btnText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddTextFragment addTextFragment = AddTextFragment.getInstance();
+                addTextFragment.setListener(Main.this);
+                addTextFragment.show(getSupportFragmentManager(), addTextFragment.getTag());
             }
         });
         loadImage();
@@ -341,5 +351,10 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     @Override
     public void onEmojiSelected(String emoji) {
         photoEditor.addEmoji(emoji);
+    }
+
+    @Override
+    public void onAddTextButtonClick(String text, int color) {
+        photoEditor.addText(text, color);
     }
 }
