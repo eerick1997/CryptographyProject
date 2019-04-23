@@ -2,6 +2,7 @@ package com.example.digitalportrait.ImageEditor.Principal;
 
 
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,21 +16,26 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.digitalportrait.ImageEditor.Adapter.ColorAdapter;
+import com.example.digitalportrait.ImageEditor.Adapter.FontAdapter;
 import com.example.digitalportrait.ImageEditor.Interface.AddTextFragmentListener;
 import com.example.digitalportrait.R;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import java.lang.reflect.Type;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddTextFragment extends BottomSheetDialogFragment implements ColorAdapter.ColorAdapterListener {
+public class AddTextFragment extends BottomSheetDialogFragment implements ColorAdapter.ColorAdapterListener, FontAdapter.FontAdapterClickListener {
 
     int colorSelected = Color.parseColor("#000000");
     AddTextFragmentListener listener;
 
     EditText edtAddText;
-    RecyclerView recyclerColor;
+    RecyclerView recyclerColor, recyclerFont;
     Button btnAddText;
+
+    Typeface typefaceSelected = Typeface.DEFAULT;
 
     static AddTextFragment instance;
 
@@ -57,13 +63,21 @@ public class AddTextFragment extends BottomSheetDialogFragment implements ColorA
         recyclerColor = itemView.findViewById(R.id.recycler_color);
         recyclerColor.setHasFixedSize(true);
         recyclerColor.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
+        recyclerFont = itemView.findViewById(R.id.recycler_font);
+        recyclerFont.setHasFixedSize(true);
+        recyclerFont.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+
         ColorAdapter colorAdapter = new ColorAdapter(getContext(), this);
         recyclerColor.setAdapter(colorAdapter);
+
+        FontAdapter fontAdapter = new FontAdapter(getContext(), this);
+        recyclerFont.setAdapter(fontAdapter);
         //Event
         btnAddText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onAddTextButtonClick(edtAddText.getText().toString(), colorSelected);
+                listener.onAddTextButtonClick(typefaceSelected, edtAddText.getText().toString(), colorSelected);
             }
         });
         return itemView;
@@ -72,5 +86,11 @@ public class AddTextFragment extends BottomSheetDialogFragment implements ColorA
     @Override
     public void onColorSelected(int color) {
         colorSelected = color;
+    }
+
+    @Override
+    public void onFontSelected(String fontName) {
+        typefaceSelected = Typeface.createFromAsset(getContext().getAssets(), new StringBuilder("fonts/")
+        .append(fontName).toString());
     }
 }

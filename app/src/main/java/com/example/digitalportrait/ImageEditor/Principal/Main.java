@@ -387,8 +387,9 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         photoEditor.addEmoji(emoji);
     }
 
+
     @Override
-    public void onAddTextButtonClick(String text, int color) {
-        photoEditor.addText(text, color);
+    public void onAddTextButtonClick(Typeface typeface, String text, int color) {
+        photoEditor.addText(typeface, text, color);
     }
 }
