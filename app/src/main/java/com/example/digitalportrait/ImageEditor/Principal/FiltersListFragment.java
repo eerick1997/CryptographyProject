@@ -2,7 +2,6 @@ package com.example.digitalportrait.ImageEditor.Principal;
 
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -42,10 +41,13 @@ public class FiltersListFragment extends BottomSheetDialogFragment implements Fi
     FilterListFragmentListener listener;
 
     static FiltersListFragment instance;
+    static Bitmap bitmap;
 
-    public static FiltersListFragment getInstance(){
+    public static FiltersListFragment getInstance(Bitmap bitmapSave){
+        bitmap = bitmapSave;
         if(instance == null)
             instance = new FiltersListFragment();
+
         return instance;
     }
 
@@ -76,7 +78,7 @@ public class FiltersListFragment extends BottomSheetDialogFragment implements Fi
         int space = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
         recyclerView.addItemDecoration(new SpacesItemDecoration(space));
         recyclerView.setAdapter(adapter);
-        displayThumbnail(null);
+        displayThumbnail(bitmap);
         return itemView;
     }
 

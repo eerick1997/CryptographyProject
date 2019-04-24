@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,11 +39,16 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.yalantis.ucrop.UCrop;
 import com.zomato.photofilters.imageprocessors.Filter;
 import com.zomato.photofilters.imageprocessors.subfilters.BrightnessSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
+
+import java.io.File;
+import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener, BrushFragmentListener, EmojiFragmentListener, AddTextFragmentListener, AddFrameListener {
 
@@ -57,12 +63,13 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
-    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText, btnAddImage, btnAddFrame;
+    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText, btnAddImage, btnAddFrame, btnCrop;
 
     int brightnessFinal = 0;
     float saturationFinal = 1.0f;
     float constrantFinal = 1.0f;
 
+    Uri imageSelectedUri;
     static {
         System.loadLibrary("NativeImageProcessor");
     }
@@ -91,13 +98,18 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         btnText = findViewById(R.id.btn_text);
         btnAddImage = findViewById(R.id.btn_add_image);
         btnAddFrame = findViewById(R.id.btn_add_frame);
+        btnCrop = findViewById(R.id.btn_crop);
 
         btnFiltersList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FiltersListFragment filtersListFragment = FiltersListFragment.getInstance();
-                filtersListFragment.setListener(Main.this);
-                filtersListFragment.show(getSupportFragmentManager(), filtersListFragment.getTag());
+                if (filtersListFragment != null)
+                    filtersListFragment.show(getSupportFragmentManager(), filtersListFragment.getTag());
+                else {
+                    FiltersListFragment filtersListFragment = FiltersListFragment.getInstance(null);
+                    filtersListFragment.setListener(Main.this);
+                    filtersListFragment.show(getSupportFragmentManager(), filtersListFragment.getTag());
+                }
             }
         });
 
@@ -153,7 +165,19 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                 addImageToPicture();
             }
         });
+        btnCrop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startCrop(imageSelectedUri);
+            }
+        });
         loadImage();
+    }
+
+    private void startCrop(Uri uri){
+        String destinationFileName = new StringBuilder(UUID.randomUUID().toString()).append(".jpg").toString();
+        UCrop ucrop = UCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
+        ucrop.start(Main.this);
     }
 
     private void addImageToPicture(){
@@ -236,7 +260,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
 
     @Override
     public void onFilteredSelected(Filter filter) {
-        resetControl();
+        //resetControl();
         filteredBitmap = originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
         photoEditorView.getSource().setImageBitmap(filter.processFilter(filteredBitmap));
         finalBitmap = filteredBitmap.copy(Bitmap.Config.ARGB_8888, true);
@@ -353,6 +377,9 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         if(resultCode == RESULT_OK){
             if(requestCode == PERMISSION_PICK_IMAGE) {
                 Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 800, 800);
+
+                imageSelectedUri = data.getData();
+
                 originalBitmap.recycle();
                 finalBitmap.recycle();
                 filteredBitmap.recycle();
@@ -362,12 +389,33 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
                 photoEditorView.getSource().setImageBitmap(originalBitmap);
                 bitmap.recycle();
 
-                filtersListFragment.displayThumbnail(originalBitmap);
+                filtersListFragment = FiltersListFragment.getInstance(originalBitmap);
+                filtersListFragment.setListener(this);
             } else if (requestCode == PERMISSION_INSERT_IMAGE){
                 Bitmap bitmap = BitmapUtils.getBitmapFromGallery(this, data.getData(), 200, 200);
                 photoEditor.addImage(bitmap);
+            } else if(requestCode == UCrop.REQUEST_CROP){
+                handleCropResult(data);
             }
+        } else if(resultCode == UCrop.RESULT_ERROR){
+            handleCropError(data);
         }
+    }
+
+    private void handleCropResult(Intent data) {
+        final Uri resultUri = UCrop.getOutput(data);
+        if (resultUri != null)
+            photoEditorView.getSource().setImageURI(resultUri);
+        else
+            Toast.makeText(this, "Cannot retreive crop image", Toast.LENGTH_SHORT).show();
+    }
+
+    private void handleCropError(Intent data) {
+        final Throwable cropError = UCrop.getError(data);
+        if (cropError != null)
+            Toast.makeText(this, "" + cropError.getMessage(), Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this, "Unexpected error", Toast.LENGTH_SHORT).show();
     }
 
     @Override
