@@ -13,6 +13,7 @@ import ja.burhanrashid52.photoeditor.PhotoEditorView;
 import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.digitalportrait.ImageEditor.Adapter.ViewPagerAdapter;
+import com.example.digitalportrait.ImageEditor.Interface.AddFrameListener;
 import com.example.digitalportrait.ImageEditor.Interface.AddTextFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.BrushFragmentListener;
 import com.example.digitalportrait.ImageEditor.Interface.EditImageFragmentListener;
@@ -42,7 +44,7 @@ import com.zomato.photofilters.imageprocessors.subfilters.ContrastSubFilter;
 import com.zomato.photofilters.imageprocessors.subfilters.SaturationSubfilter;
 import java.util.List;
 
-public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener, BrushFragmentListener, EmojiFragmentListener, AddTextFragmentListener {
+public class Main extends AppCompatActivity implements FilterListFragmentListener, EditImageFragmentListener, BrushFragmentListener, EmojiFragmentListener, AddTextFragmentListener, AddFrameListener {
 
     public static final String pictureName = "meme2.png";
     public static final int PERMISSION_PICK_IMAGE = 1000;
@@ -55,7 +57,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     FiltersListFragment filtersListFragment;
     EditImageFragment editImageFragment;
 
-    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText, btnAddImage;
+    CardView btnFiltersList, btnEdit, btnBrush, btnEmoji, btnText, btnAddImage, btnAddFrame;
 
     int brightnessFinal = 0;
     float saturationFinal = 1.0f;
@@ -88,6 +90,7 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
         btnEmoji = findViewById(R.id.btn_emoji);
         btnText = findViewById(R.id.btn_text);
         btnAddImage = findViewById(R.id.btn_add_image);
+        btnAddFrame = findViewById(R.id.btn_add_frame);
 
         btnFiltersList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,6 +139,14 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
             }
         });
 
+        btnAddFrame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FrameFragment frameFragment = FrameFragment.getInstance();
+                frameFragment.setListener(Main.this);
+                frameFragment.show(getSupportFragmentManager(), frameFragment.getTag());
+            }
+        });
         btnAddImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -391,5 +402,11 @@ public class Main extends AppCompatActivity implements FilterListFragmentListene
     @Override
     public void onAddTextButtonClick(Typeface typeface, String text, int color) {
         photoEditor.addText(typeface, text, color);
+    }
+
+    @Override
+    public void onAddFrame(int frame) {
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), frame);
+        photoEditor.addImage(bitmap);
     }
 }
